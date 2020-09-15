@@ -146,7 +146,7 @@ Here are some great resources for getting help with loading data using readr.
 In the empty codeblock below, read in the Baltimore data and store it as an object called acros_md_baltimorecity
 
 ```{r}
-acros_md_baltimorecity <- read_csv("data/arcos-md-baltimore-city-24510-pharmacy.csv")
+arcos_md_baltimorecity <- read_csv("data/arcos-md-baltimore-city-24510-pharmacy.csv")
 ```
 
 **Details in Video**: I'll show you the answer, and review some common mistakes. (My notes: Show answer, show what happens if they screw up the file path) 
