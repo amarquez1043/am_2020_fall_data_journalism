@@ -1,5 +1,5 @@
 ---
-title: "JOUR472/772 in_class_03 | heat analysis, grouping and summarizing"
+title: "JOUR472/772 in_class_04 | heat analysis, grouping and summarizing"
 author: "Sean Mussenden"
 date: "9/22/2020"
 output: 
@@ -85,6 +85,8 @@ stephanie_day_hourly_averages <- read_csv("data/temperature_sensors/stephanie/st
 
 ```{r}
 
+michael_day_hourly_averages <- read_csv("data/temperature_sensors/michael/michael_day_hourly_averages.csv")
+
 ```
 
 ## Examine data 
@@ -94,10 +96,15 @@ Now, follow the standard steps to examine the data you loaded.
 **Task (Write and Run Code)**: run the code below to glimpse() the stephanie dataframe.
 
 ```{r}
-
+glimpse (stephanie_day_hourly_averages)
 ```
 
 **Task (Create a New Codeblock, Write Code and Run It)**: create a new codeblock and write the necessary code to display the stephanie dataframe in the markdown document below the codeblock. 
+
+```{r}
+stephanie_day_hourly_averages
+
+```
 
 ## Grouping and Summarizing
 
@@ -158,7 +165,7 @@ stephanie_daily_count
 
 # Write the answer in a comment
 # Q: How many hourly readings do we have on each day in Stephanie's house?
-# A: 
+# A: 24 readings
 ```
 Here's a slightly more complicated way of answering that exact same question.  I'm showing you this method, because it will set us up for the future. 
 
@@ -247,6 +254,33 @@ Create a codeblock and write code necessary to output a **single table** that gr
   * minimum heat index value on that day 
   * the average heat index value on that day 
   * the number of hourly readings on that day 
+  
+```{r}
+michael_daily_hourly_averages <- michael_day_hourly_averages %>%
+  mutate(date = date(date_hour)) %>%
+  select(date, everything()) %>%
+  filter(date >= "2019-07-16") %>%
+  filter(date <= "2019-07-22") 
+
+michael_daily_hourly_averages
+
+```
+
+
+
+
+```{r}
+
+michael_daily_min_max <- michael_daily_hourly_averages
+  group_by(date) %>%
+  summarise(count=n())  
+  summarise(heat_index_max = max(mean_indoor_heat_index),
+            heat_index_min = min(mean_indoor_heat_index),
+            average_heat_index = mean(mean_indoor_heat_index)
+            count=n())
+  
+michael_daily_min_max
+```
 
 That should allow you to answer the following questions:
 
