@@ -82,7 +82,7 @@ covid_county <- read_csv("data/covid_county_2020_08_30.csv")
 
 ```{r}
 
-glimpse()
+glimpse(covid_county)
 
 ```
 
