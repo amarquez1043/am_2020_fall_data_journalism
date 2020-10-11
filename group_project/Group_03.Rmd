@@ -43,7 +43,7 @@ fatal_shootings %>%
 ```
 ```{r}
 
-women_only_fatal_police_shootings <- fatal_police_shootings_data %>%
+women_only_fatal_police_shootings <- fatal_shootings %>%
   filter(gender == "F") %>%
   count()
 
@@ -56,11 +56,12 @@ women_only_fatal_police_shootings
 
 ```{r}
 
-total_fatal_police_shootings <- fatal_police_shootings_data %>%
+total_fatal_police_shootings <- fatal_shootings %>%
   count()
 
 
 total_fatal_police_shootings
+
 
 ```
 #Finding 2
