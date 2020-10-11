@@ -51,7 +51,7 @@ library(tidyverse)
 
 1. Tracking fatal police shootings in 2015
 2. 247 women - ANSWERED
-3. 5,600 total
+3. 5,600 total - ANSWERED
 
 
 ```{r}
@@ -68,10 +68,28 @@ women_only_fatal_police_shootings
 ```
 
 
+```{r}
+
+total_fatal_police_shootings <- fatal_police_shootings_data %>%
+  count()
+
+
+total_fatal_police_shootings
 
 
 
 
+```
+
+
+```{r}
+starting_date <- fatal_police_shootings_data %>%
+  filter(date == "2015-01-02")
+
+
+starting_date
+
+```
 
 
 
