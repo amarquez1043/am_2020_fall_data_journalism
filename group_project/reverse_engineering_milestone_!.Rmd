@@ -49,6 +49,10 @@ library(tidyverse)
 
 “Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall.”
 
+1. Tracking fatal police shootings in 2015
+2. 247 women - ANSWERED
+3. 5,600 total
+
 
 ```{r}
 
