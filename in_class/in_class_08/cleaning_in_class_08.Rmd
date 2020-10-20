@@ -38,7 +38,9 @@ library(tidyverse)
 
 # Load janitor
 # If you need to install it, run this code
+
 # install.packages('janitor')
+
 library(janitor)
 
 ```
@@ -84,7 +86,7 @@ Q: How many deaths are there in the county with FIPS code 24003 -- Anne Arundel?
 
 ```{r}
 county_covid_deaths_dirty %>%
-  filter(FIPS code !, == 24003)
+  filter(`FIPS code !,` == 24003)
 ```
 
 Q: How many counties are in Maryland?
@@ -137,7 +139,7 @@ Q: How many deaths are there in the county with FIPS code 24003 -- Anne Arundel?
 county_covid_deaths %>%
   filter(fips_code == 24003)
 
-# A: 
+# A: 236 deaths
 ```
 
 ### Fix multiple values in state column
