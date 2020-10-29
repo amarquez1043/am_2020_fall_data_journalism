@@ -1,43 +1,69 @@
 ---
 title: "fatal_shootings_data"
-output: html_document
+author: "Kara Newhouse, Jack Hogan, Audrey Widodo, Sasha Marquez" 
+date: "10/30/2020"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    df_print: paged
+  md_document:
+    variant: markdown_github
+    toc: true
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# load libraries
-```{r}
+## Introduction
 
+Just write a paragraph where you explain the purpose of this document. REVERSE ENGINEER THE STORY. [Nearly 250 women have been fatally shot by police since 2015](https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/)
+
+DATA HAS BEEN UPDATED SINCE POST RAN STORY, SO OUR FINDINGS SLIGHTLY DIFFERENT. 
+
+## Load libraries
+
+```{r}
+# Load tidyverse for general data analysis 
 library(tidyverse)
 
 ```
+```
 
-#load data
+## Load and clean data
+DESCRIPTION OF WHAT THE DATA IS, WHERE YOU GOT IT, WHAT IT INCLUDES, INCLUDING A LIST OF WHAT EACH FIELD IS. 
+
+* name | character | name of person shot by police
 ```{r}
 
 fatal_shootings <- read_csv("fatal-police-shootings-data.csv")
 
 ```
 
-# examine data
+## Examine data
 ```{r}
 
 glimpse(fatal_shootings)
 
 ```
 
-# analysis
+## Analysis
 
-#Finding 1
+### Finding 1
 
 “Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall.”
 
 ```{r}
 
+#Select fatal_shootings data frame AND THEN
 fatal_shootings %>%
+#Arrange the data frame by date from earliest to latest AND THEN   
   arrange(date) %>%
+#Select just the data column to display   
   select(date)
 
 #The Washington Post's first data point is from January 2, 2015.
@@ -45,28 +71,34 @@ fatal_shootings %>%
 ```
 ```{r}
 
+#Create new data frame called women_only_fatal_police_shootings from the fatal_shootings data frame AND THEN
 women_only_fatal_police_shootings <- fatal_shootings %>%
+#Filter by the gender column for just female ("F") rows AND THEN
   filter(gender == "F") %>%
+#Count the number of "F" rows AND THEN
   count()
 
-
+#Display new data frame
 women_only_fatal_police_shootings
 
-#250 women have be shot and killed by police sinve 2015.
+#250 women have be shot and killed by police since 2015.
 
 ```
 
 ```{r}
 
+#Create new data frame called total_fatal_police_shootings from the fatal_shootings data frame AND THEN
 total_fatal_police_shootings <- fatal_shootings %>%
+#Cout the total number of rows AND THEN
   count()
 
-
+#Display new data frame
 total_fatal_police_shootings
 
 #There are 5680 records in the Post's data set, meaning that 5680 people have been shot and killed by police since the beginning of 2015. 
 ```
-#Finding 2
+
+### Finding 2
 
 “Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known..."
 
@@ -124,7 +156,7 @@ fatal_shootings %>%
 ```
 
 
-#Finding 3
+### Finding 3
 
 “The starkest difference between women and men is the rate: Women account for about half the population, but 4 percent of the killings.”
 
@@ -143,41 +175,27 @@ women_percentage
 
 
 
-##Finding 4
+### Finding 4
+
 "About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed."
 
 ```{r}
-#Option 1
-shootings_mental_health <- fatal_shootings %>%
-  filter(signs_of_mental_illness == "TRUE") %>%
-  group_by(gender) %>%
+#Create a new object called "mental_illness_gender." Use data from fatal_shootings. AND THEN
+#Group the data by gender and signs of mental illness. AND THEN
+#Count. This tells us the number of people with or without mental illness for each gender. AND THEN
+#Using the pivot_wider function, reshape the data frame. In this case, we want to see columns with the names from the mental illness categories and values from the counts. AND THEN
+#Rename the mental illness categories so that the "true" column becomes "mental_illness" and the "false" column becomes "no_mental_illness." AND THEN
+#Add a new column called "total" that sums the count for both mental illness categories within each gender. AND THEN
+#Add a new column called "pct_mental_illness" that divides the total individuals with mental illness for each gender by the overall total for each gender. Multiply by 100 to obtain a percentage. AND THEN
+#Select the columns "gender" and "pct_mental_illness" to view only the relevant information for this question.
+mental_illness_gender <- fatal_shootings %>%
+  group_by(gender, signs_of_mental_illness) %>%
   count() %>%
-  pivot_wider(names_from = gender, values_from = n) %>%
-  mutate(percent_women = `F`/250*100) %>%
-  mutate(percent_men = `M`/5429*100)
-  
-#The values for total men and women shot are known from Finding #3, however by entering those values into the formula myself I introduce potential for human error. Using this approach, I am not sure how to get those totals of men and women shot into the same data frame as the totals of mentally ill men and women shot. I tried another approach below.
-shootings_mental_health
+  pivot_wider(names_from=signs_of_mental_illness, values_from=n)%>%
+  rename(mental_illness = `TRUE`, 
+         no_mental_illness = `FALSE`) %>%
+  mutate(total=no_mental_illness+mental_illness) %>%
+  mutate(pct_mental_illness = mental_illness/total*100) %>%
+  select(gender, pct_mental_illness)
+mental_illness_gender 
 ```
-
-```{r}
-#Option 2
-#Group by gender to get totals.
-number_gender <- fatal_shootings %>%
-  group_by(gender) %>%
-  count() %>%
-  rename(gender_total = n)
-number_gender 
-#Filter for mental illness and group by gender.
-shootings_mental_illness_gender <- fatal_shootings %>%
-  filter(signs_of_mental_illness == "TRUE") %>%
-  group_by(gender) %>%
-  count() %>%
-  rename(mental_illness_total = n)
-shootings_mental_illness_gender
-#Join the new data frames and add a column that calculates percentage.
-shootings_mental_illness_percentage <- shootings_mental_illness_gender %>%
-  inner_join(number_gender) %>%
-  mutate(gender_percent = mental_illness_total/gender_total*100)
-shootings_mental_illness_percentage
-#While this approach is accurate, I doubt it is the most efficient method.
