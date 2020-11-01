@@ -25,19 +25,35 @@ This markdown document contains code to recreate four findings from the story:[N
 
 ## Load Libraries
 
-```{r}
+```{r message = FALSE, warning = FALSE} 
 # Load tidyverse for general data analysis 
 library(tidyverse)
 
-```
 ```
 
 ## Load and clean data
 
 The data was downloaded from Github, at a site maintained by the Washington Post data team. The data includes information about every fatal police shooting in the U.S. since the start of 2015. Each row identifies a different victim and a description of how they were killed. Here is a list of column names: 
 
-* id |name | date | manner_of_death | armed | age | gender | race | city | state | signs_of_mental_illness | threat_level | flee | body_camera | longitude | latitude | is_geocoding_exact
-```{r}
+* id - Unique identifier for each shooting
+* name - Name of victim
+* date - Date of the death
+* manner_of_death - How the victim died, incl. "shot" or "shot and tasered"
+* armed - Whether or not the victim was armed
+* age - Age of the victim at time of death
+* gender - Gender of the victim, M or F
+* race - Victim's race, incl. W, B, H
+* city - City where shooting ocurred 
+* state - State where shooting ocurred
+* signs_of_mental_illness - Whether or not the victim was having a mental health emergency; identified by TRUE or FALSE
+* threat_level - Whether or not the victim was a threat to police officers, based on police reports; identified as "attack," "other," "undetermined"
+* flee - Whether or not the victim was fleeing police at the time of the incident; identified as "car," "foot," or "not fleeing"
+* body_camera - Whether or not the police officer was wearing a body camera; identified as "true" or "false"
+* longitude - Exact longitude of shooting
+* latitude - Exact latitude of shooting
+* is_geocoding_exact - Identified by "TRUE" or "FALSE"
+
+```{r message = FALSE, warning = FALSE}
 # Load data
 
 fatal_shootings <- read_csv("fatal-police-shootings-data.csv")
@@ -45,7 +61,7 @@ fatal_shootings <- read_csv("fatal-police-shootings-data.csv")
 ```
 
 ## Examine data
-```{r}
+```{r message = FALSE, warning = FALSE}
 
 glimpse(fatal_shootings)
 
@@ -102,7 +118,7 @@ total_fatal_police_shootings
 
 “Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known..."
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 # First, load data set AND THEN,
 # filter out cases in which race is not known, which is labeled as 'None', AND THEN,
 # group race and gender, allowing us to perform operations simultaneously on the two columns AND THEN,
@@ -134,7 +150,7 @@ fatal_shootings %>%
 
 "... But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed...
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 # First, load data set AND THEN,
 # filter cases to include only those involving women, labeled "F", AND THEN,
 # group race and gender, allowing us to perform operations simultaneously on the two columns AND THEN,
@@ -165,7 +181,7 @@ fatal_shootings %>%
 
 "and 28 percent of the unarmed deaths.”
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 # First, load data set AND THEN,
 # filter cases to include only those in which the person shot and killed was unarmed AND THEN,
 # filter cases to include only those involving women, labeled "F", AND THEN,
