@@ -21,11 +21,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-Just write a paragraph where you explain the purpose of this document. REVERSE ENGINEER THE STORY. [Nearly 250 women have been fatally shot by police since 2015](https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/)
+This markdown document contains code to recreate four findings from the story:[Nearly 250 women have been fatally shot by police since 2015](https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/). We reverse engineered the four findings in detail below. Some of our findings are slightly different than those in the original Washington Post story because the database they used has been updated since the story published.
 
-DATA HAS BEEN UPDATED SINCE POST RAN STORY, SO OUR FINDINGS SLIGHTLY DIFFERENT. 
-
-## Load libraries
+## Load Libraries
 
 ```{r}
 # Load tidyverse for general data analysis 
@@ -35,10 +33,12 @@ library(tidyverse)
 ```
 
 ## Load and clean data
-DESCRIPTION OF WHAT THE DATA IS, WHERE YOU GOT IT, WHAT IT INCLUDES, INCLUDING A LIST OF WHAT EACH FIELD IS. 
 
-* name | character | name of person shot by police
+The data was downloaded from Github, at a site maintained by the Washington Post data team. The data includes information about every fatal police shooting in the U.S. since the start of 2015. Each row identifies a different victim and a description of how they were killed. Here is a list of column names: 
+
+* id |name | date | manner_of_death | armed | age | gender | race | city | state | signs_of_mental_illness | threat_level | flee | body_camera | longitude | latitude | is_geocoding_exact
 ```{r}
+# Load data
 
 fatal_shootings <- read_csv("fatal-police-shootings-data.csv")
 
@@ -103,6 +103,20 @@ total_fatal_police_shootings
 “Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known..."
 
 ```{r}
+# First, load data set AND THEN,
+# filter out cases in which race is not known, which is labeled as 'None', AND THEN,
+# group race and gender, allowing us to perform operations simultaneously on the two columns AND THEN,
+# create a column called total_shootings to calculate how many times each race, gender combination appears in the data set AND THEN,
+# arrange total_shootings in descending order AND THEN,
+# create a column called race_gender that groups race and gender together AND THEN,
+# using the "ungroup" function, undo the earlier function that linked the race and gender columns AND THEN,
+# select the race_gender and total_shootings columns to display the number of times each demographic appears in the data set AND THEN,
+# use the "pivot_wider" function to turn the race_gender column into a row, which will make it easier to compare demographics moving forward AND THEN,
+# Add back the total_shootings column, which was removed after "pivot_wider" reshaped the data set AND THEN,
+# select total_shootings and `B-F`, which is the label for Black women, AND THEN,
+# create a new column called pct_black_female that will display the proportion of total shootings that Black women make up AND THEN,
+# select the new column
+
 fatal_shootings %>%
   filter(race != "None") %>%
   group_by(race, gender) %>%
@@ -114,14 +128,26 @@ fatal_shootings %>%
   pivot_wider(names_from = race_gender, values_from = total_shootings) %>%
   mutate(total_shootings = sum(c_across(`W-M`:`W-NA`))) %>%
   select(total_shootings, `B-F`) %>%
-  mutate(Black_female_proportion_of_fatal_shootings = `B-F`/total_shootings*100) %>%
-  select(Black_female_proportion_of_fatal_shootings)
-  
+  mutate(pct_black_female = `B-F`/total_shootings*100) %>%
+  select(pct_black_female)
 ```
 
 "... But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed...
 
 ```{r}
+# First, load data set AND THEN,
+# filter cases to include only those involving women, labeled "F", AND THEN,
+# group race and gender, allowing us to perform operations simultaneously on the two columns AND THEN,
+# create a column called total_shootings to calculate how many times women of each race appear in the data set AND THEN,
+# arrange total_shootings in descending order AND THEN,
+# create a column called race_gender that groups race and gender together AND THEN,
+# using the "ungroup" function, undo the earlier function that linked the race and gender columns AND THEN,
+# select the race_gender and total_shootings columns to display the number of times each demographic appears in the data set AND THEN,
+# use the "pivot_wider" function to turn the race_gender column into a row, which will make it easier to compare each race moving forward AND THEN,
+# Add back the total_shootings column, which was removed after "pivot_wider" reshaped the data set AND THEN,
+# select total_shootings and `B-F`, which is the label for Black women, AND THEN,
+# create a new column called pct_black_female that will display the proportion of total shootings of women that Black women make up AND THEN,
+# select the new column
 fatal_shootings %>%
   filter(gender == "F") %>%
   group_by(race, gender) %>%
@@ -133,46 +159,63 @@ fatal_shootings %>%
   pivot_wider(names_from = race_gender, values_from = total_shootings) %>%
   mutate(total_shootings = sum(c_across(`W-F`:`O-F`))) %>%
   select(total_shootings, `B-F`) %>%
-  mutate(Black_female_proportion_of_female_shootings = `B-F`/total_shootings*100) %>%
-  select(Black_female_proportion_of_female_shootings)
+  mutate(pct_black_female = `B-F`/total_shootings*100) %>%
+  select(pct_black_female)
 ```
 
 "and 28 percent of the unarmed deaths.”
 
 ```{r}
+# First, load data set AND THEN,
+# filter cases to include only those in which the person shot and killed was unarmed AND THEN,
+# filter cases to include only those involving women, labeled "F", AND THEN,
+# group armed, race and gender, allowing us to perform operations simultaneously on the three columns AND THEN,
+# create a column called total_unarmed_shootings to calculate how many times women of each race appear in the data set AND THEN,
+# create a column called race_gender that groups race and gender together AND THEN,
+# using the "ungroup" function, undo the earlier function that linked the armed, race and gender columns AND THEN,
+# select the race_gender and total_unarmed_shootings columns to display the number of times each demographic appears in the data set AND THEN,
+# use the "pivot_wider" function to turn the race_gender column into a row, which will make it easier to compare each race moving forward AND THEN,
+# Add back the total_unarmed_shootings column, which was removed after "pivot_wider" reshaped the data set AND THEN,
+# select total_unarmed_shootings and `B-F`, which is the label for Black women, AND THEN,
+# create a new column called pct_black_female that will display the proportion of total unarmed deaths that Black women make up AND THEN,
+# select the new column
 fatal_shootings %>%
   filter(armed == "unarmed") %>%
   filter(gender == "F") %>%
   group_by(armed, race, gender) %>%
-  select(armed, race, gender) %>%
   summarize(total_unarmed_shootings = n()) %>%
   mutate(race_gender = paste(race, gender, sep = "-")) %>%
   ungroup() %>%
   select(race_gender, total_unarmed_shootings) %>%
   pivot_wider(names_from = race_gender, values_from = total_unarmed_shootings) %>%
   mutate(total_unarmed_shootings = sum(c_across(`B-F`:`NA-F`))) %>%
-  select(total_unarmed_shootings, `B-F`)
+  select(total_unarmed_shootings, `B-F`) %>%
+  mutate(pct_black_female = `B-F`/total_unarmed_shootings*100) %>%
+  select(pct_black_female)
   
 ```
-
 
 ### Finding 3
 
 “The starkest difference between women and men is the rate: Women account for about half the population, but 4 percent of the killings.”
 
 ```{r}
+#Create data table for women percentage 
 women_percentage <- fatal_shootings %>%
+#Filter data to be sorted by gender, into male and female
   group_by(gender) %>%
+#Count the values in the table for the two variables
   count() %>%
+#Create columns for the types of gender and their count values 
   pivot_wider(names_from = gender , values_from = n) %>%
+#Calculate the total number of all count values
   mutate(total=`F`+`M`+`NA`) %>%
+#Calculate percentage of female values divided by the total values 
   mutate(percent_women = `F`/total*100)
 
 
 women_percentage
 ```
-
-
 
 
 ### Finding 4

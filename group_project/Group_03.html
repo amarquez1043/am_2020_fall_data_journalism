@@ -2861,28 +2861,29 @@ div.tocify {
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Just write a paragraph where you explain the purpose of this document. REVERSE ENGINEER THE STORY. <a href="https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/">Nearly 250 women have been fatally shot by police since 2015</a></p>
-<p>DATA HAS BEEN UPDATED SINCE POST RAN STORY, SO OUR FINDINGS SLIGHTLY DIFFERENT.</p>
+<p>This markdown document contains code to recreate four findings from the story:<a href="https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/">Nearly 250 women have been fatally shot by police since 2015</a>. We reverse engineered the four findings in detail below. Some of our findings are slightly different than those in the original Washington Post story because the database they used has been updated since the story published.</p>
 </div>
 <div id="load-libraries" class="section level2">
-<h2>Load libraries</h2>
+<h2>Load Libraries</h2>
 <pre class="r"><code># Load tidyverse for general data analysis 
 library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
 ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
 ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
 ## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre><code>
 ## Load and clean data
-DESCRIPTION OF WHAT THE DATA IS, WHERE YOU GOT IT, WHAT IT INCLUDES, INCLUDING A LIST OF WHAT EACH FIELD IS. 
+The data was downloaded from Github, at a site maintained by the Washington Post data team. The data includes information about every fatal police shooting in the U.S. since the start of 2015. Each row identifies a different victim and a description of how they were killed. Here is a list of column names: 
 
-* name | character | name of person shot by police
+* id |name | date | manner_of_death | armed | age | gender | race | city | state | signs_of_mental_illness | threat_level | flee | body_camera | longitude | latitude | is_geocoding_exact
 
 ```r
+# Load data
+
 fatal_shootings &lt;- read_csv(&quot;fatal-police-shootings-data.csv&quot;)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
@@ -2977,7 +2978,21 @@ total_fatal_police_shootings</code></pre>
 <div id="finding-2" class="section level3">
 <h3>Finding 2</h3>
 <p>“Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known…”</p>
-<pre class="r"><code>fatal_shootings %&gt;%
+<pre class="r"><code># First, load data set AND THEN,
+# filter out cases in which race is not known, which is labeled as &#39;None&#39;, AND THEN,
+# group race and gender, allowing us to perform operations simultaneously on the two columns AND THEN,
+# create a column called total_shootings to calculate how many times each race, gender combination appears in the data set AND THEN,
+# arrange total_shootings in descending order AND THEN,
+# create a column called race_gender that groups race and gender together AND THEN,
+# using the &quot;ungroup&quot; function, undo the earlier function that linked the race and gender columns AND THEN,
+# select the race_gender and total_shootings columns to display the number of times each demographic appears in the data set AND THEN,
+# use the &quot;pivot_wider&quot; function to turn the race_gender column into a row, which will make it easier to compare demographics moving forward AND THEN,
+# Add back the total_shootings column, which was removed after &quot;pivot_wider&quot; reshaped the data set AND THEN,
+# select total_shootings and `B-F`, which is the label for Black women, AND THEN,
+# create a new column called pct_black_female that will display the proportion of total shootings that Black women make up AND THEN,
+# select the new column
+
+fatal_shootings %&gt;%
   filter(race != &quot;None&quot;) %&gt;%
   group_by(race, gender) %&gt;%
   summarize(total_shootings = n()) %&gt;%
@@ -2988,16 +3003,29 @@ total_fatal_police_shootings</code></pre>
   pivot_wider(names_from = race_gender, values_from = total_shootings) %&gt;%
   mutate(total_shootings = sum(c_across(`W-M`:`W-NA`))) %&gt;%
   select(total_shootings, `B-F`) %&gt;%
-  mutate(Black_female_proportion_of_fatal_shootings = `B-F`/total_shootings*100) %&gt;%
-  select(Black_female_proportion_of_fatal_shootings)</code></pre>
+  mutate(pct_black_female = `B-F`/total_shootings*100) %&gt;%
+  select(pct_black_female)</code></pre>
 <pre><code>## `summarise()` regrouping output by &#39;race&#39; (override with `.groups` argument)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Black_female_proportion_of_fatal_shootings"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.9433962"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["pct_black_female"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.9433962"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>&quot;… But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed…</p>
-<pre class="r"><code>fatal_shootings %&gt;%
+<pre class="r"><code># First, load data set AND THEN,
+# filter cases to include only those involving women, labeled &quot;F&quot;, AND THEN,
+# group race and gender, allowing us to perform operations simultaneously on the two columns AND THEN,
+# create a column called total_shootings to calculate how many times women of each race appear in the data set AND THEN,
+# arrange total_shootings in descending order AND THEN,
+# create a column called race_gender that groups race and gender together AND THEN,
+# using the &quot;ungroup&quot; function, undo the earlier function that linked the race and gender columns AND THEN,
+# select the race_gender and total_shootings columns to display the number of times each demographic appears in the data set AND THEN,
+# use the &quot;pivot_wider&quot; function to turn the race_gender column into a row, which will make it easier to compare each race moving forward AND THEN,
+# Add back the total_shootings column, which was removed after &quot;pivot_wider&quot; reshaped the data set AND THEN,
+# select total_shootings and `B-F`, which is the label for Black women, AND THEN,
+# create a new column called pct_black_female that will display the proportion of total shootings of women that Black women make up AND THEN,
+# select the new column
+fatal_shootings %&gt;%
   filter(gender == &quot;F&quot;) %&gt;%
   group_by(race, gender) %&gt;%
   summarize(total_shootings = n()) %&gt;%
@@ -3008,42 +3036,62 @@ total_fatal_police_shootings</code></pre>
   pivot_wider(names_from = race_gender, values_from = total_shootings) %&gt;%
   mutate(total_shootings = sum(c_across(`W-F`:`O-F`))) %&gt;%
   select(total_shootings, `B-F`) %&gt;%
-  mutate(Black_female_proportion_of_female_shootings = `B-F`/total_shootings*100) %&gt;%
-  select(Black_female_proportion_of_female_shootings)</code></pre>
+  mutate(pct_black_female = `B-F`/total_shootings*100) %&gt;%
+  select(pct_black_female)</code></pre>
 <pre><code>## `summarise()` regrouping output by &#39;race&#39; (override with `.groups` argument)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Black_female_proportion_of_female_shootings"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"19.2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["pct_black_female"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"19.2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>“and 28 percent of the unarmed deaths.”</p>
-<pre class="r"><code>fatal_shootings %&gt;%
+<pre class="r"><code># First, load data set AND THEN,
+# filter cases to include only those in which the person shot and killed was unarmed AND THEN,
+# filter cases to include only those involving women, labeled &quot;F&quot;, AND THEN,
+# group armed, race and gender, allowing us to perform operations simultaneously on the three columns AND THEN,
+# create a column called total_unarmed_shootings to calculate how many times women of each race appear in the data set AND THEN,
+# create a column called race_gender that groups race and gender together AND THEN,
+# using the &quot;ungroup&quot; function, undo the earlier function that linked the armed, race and gender columns AND THEN,
+# select the race_gender and total_unarmed_shootings columns to display the number of times each demographic appears in the data set AND THEN,
+# use the &quot;pivot_wider&quot; function to turn the race_gender column into a row, which will make it easier to compare each race moving forward AND THEN,
+# Add back the total_unarmed_shootings column, which was removed after &quot;pivot_wider&quot; reshaped the data set AND THEN,
+# select total_unarmed_shootings and `B-F`, which is the label for Black women, AND THEN,
+# create a new column called pct_black_female that will display the proportion of total unarmed deaths that Black women make up AND THEN,
+# select the new column
+fatal_shootings %&gt;%
   filter(armed == &quot;unarmed&quot;) %&gt;%
   filter(gender == &quot;F&quot;) %&gt;%
   group_by(armed, race, gender) %&gt;%
-  select(armed, race, gender) %&gt;%
   summarize(total_unarmed_shootings = n()) %&gt;%
   mutate(race_gender = paste(race, gender, sep = &quot;-&quot;)) %&gt;%
   ungroup() %&gt;%
   select(race_gender, total_unarmed_shootings) %&gt;%
   pivot_wider(names_from = race_gender, values_from = total_unarmed_shootings) %&gt;%
   mutate(total_unarmed_shootings = sum(c_across(`B-F`:`NA-F`))) %&gt;%
-  select(total_unarmed_shootings, `B-F`)</code></pre>
+  select(total_unarmed_shootings, `B-F`) %&gt;%
+  mutate(pct_black_female = `B-F`/total_unarmed_shootings*100) %&gt;%
+  select(pct_black_female)</code></pre>
 <pre><code>## `summarise()` regrouping output by &#39;armed&#39;, &#39;race&#39; (override with `.groups` argument)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["total_unarmed_shootings"],"name":[1],"type":["int"],"align":["right"]},{"label":["B-F"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"26","2":"7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["pct_black_female"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"26.92308"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
 <div id="finding-3" class="section level3">
 <h3>Finding 3</h3>
 <p>“The starkest difference between women and men is the rate: Women account for about half the population, but 4 percent of the killings.”</p>
-<pre class="r"><code>women_percentage &lt;- fatal_shootings %&gt;%
+<pre class="r"><code>#Create data table for women percentage 
+women_percentage &lt;- fatal_shootings %&gt;%
+#Filter data to be sorted by gender, into male and female
   group_by(gender) %&gt;%
+#Count the values in the table for the two variables
   count() %&gt;%
+#Create columns for the types of gender and their count values 
   pivot_wider(names_from = gender , values_from = n) %&gt;%
+#Calculate the total number of all count values
   mutate(total=`F`+`M`+`NA`) %&gt;%
+#Calculate percentage of female values divided by the total values 
   mutate(percent_women = `F`/total*100)
 
 
