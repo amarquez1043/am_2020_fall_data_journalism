@@ -85,6 +85,7 @@ fatal_shootings %>%
 #The Washington Post's first data point is from January 2, 2015.
 
 ```
+
 ```{r}
 
 #Create new data frame called women_only_fatal_police_shootings from the fatal_shootings data frame AND THEN
@@ -105,7 +106,7 @@ women_only_fatal_police_shootings
 
 #Create new data frame called total_fatal_police_shootings from the fatal_shootings data frame AND THEN
 total_fatal_police_shootings <- fatal_shootings %>%
-#Cout the total number of rows AND THEN
+#Count the total number of rows AND THEN
   count()
 
 #Display new data frame
