@@ -99,7 +99,8 @@ First, let's filter the data to create a data frame with only Anne Arundel count
 
 ```{r}
 anne_arundel <- maryland %>%
-  filter(county == "Anne Arundel")
+  filter(county == "Anne Arundel") %>%
+  arrange(case_rate)
 
 ```
 
@@ -193,7 +194,8 @@ Now let's add some labels over each bar, to help people see specific values for 
 
 anne_arundel %>%
   ggplot(aes(month, case_rate)) +
-  geom_bar(stat="identity", fill="steelblue") +
+  geom_bar(stat="identity", 
+           fill="steelblue") +
   labs(
     x="Month",
     y="Cases per 1,000 people",
@@ -246,6 +248,26 @@ Create a code block below, and create a bar chart showing the increase in case r
 **Task (Create a Codeblock, Write and Run Code):** Create the chart below. 
 
 ```{r}
+baltimore_city <- maryland %>%
+  filter(county == "Baltimore city")
+
+
+
+baltimore_city
+
+```
+
+```{r}
+baltimore_city %>%
+  ggplot(aes(month, case_rate)) +
+  geom_bar(stat="identity", fill="steelblue") +
+  labs(
+    x="Month",
+    y="Cases per 1,000 people",
+    title="In Baltimore City, steady increase in COVID cases",
+    caption="Source: Analysis of New York Times COVID data"
+  ) +
+  geom_text(aes(label=round(case_rate,0)))
 
 ```
 

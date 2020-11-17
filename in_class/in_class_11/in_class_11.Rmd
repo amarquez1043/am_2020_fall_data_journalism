@@ -99,7 +99,7 @@ We can keep adding functions from the ggplot2 library to improve the chart, usin
   # Display the data as a bar chart
 anne_arundel %>%
   ggplot(aes(month, case_rate)) +
-  geom_line(stat="identity",
+  geom_bar(stat="identity",
            fill="steelblue",) +
       labs(
        x="Month",
