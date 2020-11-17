@@ -21,21 +21,6 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r}
 
-library(tidyverse)
-library(vembedr)
-
-```
-
-```{r}
-
-national_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_national_year.csv")
-county_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_county_year.csv")
-state_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_state_year.csv")
-model_county <- read_csv("data-2c-beyond-the-limit-usa/data/processed/model_county.csv")
-model_state <- read_csv("data-2c-beyond-the-limit-usa/data/processed/model_state.csv")
-raw_data_1 <- read_csv("data-2c-beyond-the-limit-usa/data/raw/110-tavg-all-12-1895-2020.csv")
-
-options(scipen=999)
 
 ```
 ## About this notebook
