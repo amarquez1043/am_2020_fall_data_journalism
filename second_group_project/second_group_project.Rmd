@@ -33,9 +33,30 @@ county_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_cou
 state_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_state_year.csv")
 model_county <- read_csv("data-2c-beyond-the-limit-usa/data/processed/model_county.csv")
 model_state <- read_csv("data-2c-beyond-the-limit-usa/data/processed/model_state.csv")
-raw_data_1 <- read_csv("data-2c-beyond-the-limit-usa/data/raw/110-tavg-all-12-1895-2020.csv")
 
 options(scipen=999)
 
 ```
-## About this notebook
+
+
+```{r}
+#Create new data frame called model_state_ND_only
+model_state_ND_only <- model_state %>%
+#Filter just for the row of North Dakota data  
+  filter (fips == 38) 
+
+#Display new dataframe
+model_state_ND_only
+
+```
+
+```{r}
+#Create new data frame called model_state_sorted
+model_state_sorted <- model_state %>%
+#Sort the model_state sheet in descending order by annual average temperature change  
+  arrange (desc(Annual))
+#Display new dataframe
+model_state_sorted
+
+#North Dakota is the state in the U.S. with the seventh largest rate of annual average temperature change. Each of the states with larger change are confined to one region: New England and the mid-Atlantic. North Dakota stands out as the first state on the list not in that region, but rather much closer to the Pacific coast. Some questions emerge: how does the high rate of temperature change affect crops grown in the state? How does the high rate of temperature change affect the growing season for agriculture in the state? Are there any correlated phenomena (ie. drought, rainfall, weather conditions, etc) that can be observed as a result of the high rate of temperature change? Why is the average annual temperature change in North Dakota more comparable to states in New England rather than other states around North Dakota?
+```
