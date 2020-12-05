@@ -23,6 +23,7 @@ When you click the **Knit** button a document will be generated that includes bo
 
 library(tidyverse)
 library(vembedr)
+library(lubridate)
 
 ```
 
@@ -33,6 +34,7 @@ county_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_cou
 state_year <- read_csv("data-2c-beyond-the-limit-usa/data/processed/climdiv_state_year.csv")
 model_county <- read_csv("data-2c-beyond-the-limit-usa/data/processed/model_county.csv")
 model_state <- read_csv("data-2c-beyond-the-limit-usa/data/processed/model_state.csv")
+drought_data <- read_csv("data/north_dakota_drought_severity_data - Sheet1.csv")
 
 options(scipen=999)
 
@@ -74,4 +76,30 @@ model_county_ND_sorted
 
 #This dataframe arranges counties in North Dakota in descending order by average annual temperature change. The top five counties listed are all in the northernmost part of the state, which poses some questions about what the agriculture is like there, what the terrain is like, what the population and industry is like, and how these are all affected by rising temperatures. Additionally, all top 5 counties have had average annual temperature increases of at least .31 degrees higher than the state average.
 
+```
+
+```{r}
+glimpse(drought_data)
+```
+
+```{r}
+drought_data_year_filtered <- drought_data %>%
+  mutate(year = year(Week))
+
+
+drought_data_year_filtered
+
+```
+```{r}
+ND_only_state_year <- state_year %>%
+   filter (fips == "38")
+
+ND_only_state_year
+
+```
+
+```{r}
+year_2020_only <- drought_data_year_filtered %>%
+  filter(year == "2020") %>%
+  summarise(d0-d4_Avg = mean(D0-D4))
 ```
