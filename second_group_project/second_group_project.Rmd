@@ -28,7 +28,11 @@ library(janitor)
 
 ```
 
+##Background: Why we selected North Dakota
+
 ```{r}
+
+#Read in all of the processed data from the Washington Post database
 
 national_year <- read.csv("https://raw.githubusercontent.com/washingtonpost/data-2C-beyond-the-limit-usa/main/data/processed/climdiv_national_year.csv")
 county_year <- read.csv("https://raw.githubusercontent.com/washingtonpost/data-2C-beyond-the-limit-usa/main/data/processed/climdiv_county_year.csv")
@@ -41,7 +45,6 @@ options(scipen=999)
 
 ```
 
-
 ```{r}
 #Create new data frame called model_state_ND_only
 model_state_ND_only <- model_state %>%
@@ -50,7 +53,6 @@ model_state_ND_only <- model_state %>%
 
 ```
 
-##Background: Why we selected North Dakota
 ```{r}
 #Create new data frame called model_state_sorted
 model_state_sorted <- model_state %>%
@@ -148,5 +150,88 @@ yearly_avg_temps_drought %>%
 ```
 
 ##Finding 2: Rising temperatures in North Dakota have extended their growing season.
-##Finding 3: Climate change's effect on Native American reservations in North Dakota
+
+```{r}
+
+#read in growing season data for Fargo, ND
+fargo_growing_season <- read_csv("data/processed/fargo_growing_season.csv")
+
+```
+
+```{r}
+
+#Create a new data frame and summarize the data by decade, taking out the min/max and 2020
+season_length <- fargo_growing_season %>%
+  filter(year != "2020") %>%
+  mutate(decade = str_sub(year, start = 1L, end = 3L)) %>%
+  mutate(decade = paste0(decade, "0")) %>%
+  group_by(decade) %>%
+  summarize(season_length = mean(season_length)) %>%
+  mutate(season_length = round(season_length, 0)) %>%
+  filter(!str_detect(decade, "M"))
+
+#Create a graph below which displays the average number of days in a growing season by decade
+season_length %>%
+  ggplot(aes(decade, season_length)) +
+  geom_bar(stat="identity", fill="steelblue") +
+  labs(
+    x="Year",
+    y="Number of days in growing season",
+    title="Average Growing Season Length of North Dakota"
+  )
+
+# Taking the fargo_growing_season data frame, we created a chart to show that from 1881 to 2020, there has been a general, upward trend of longer growing seasons. Since there are so many years, we grouped them by decades. The general progression of the data is an increased length of the growing season, which connects to the general trend of warming temperatures. This has had a positive impact on agriculture in ND because farmers have a longer time frame to grow crops. 
+
+```
+
+```{r}
+
+#Created a new data frame for a line plot
+fargo_growing_year <- fargo_growing_season %>%
+  filter(year != "2020") %>%
+  filter(!str_detect(year, "M")) %>%
+  mutate(year=as.numeric(year))
+
+#Used function to find an average line
+fargo_growing_year %>%
+  ggplot() + 
+  geom_line(aes(y = season_length, x = year)) +
+  geom_smooth(aes(y = season_length, x = year), method = "loess")
+  
+#In the line plot, we displayed every year throughout the decades. It's clear that there are outliers and the trend isn't straight up. Due to weather fluctuations, there are going to be years that are lower and higher. However, looking at the average line, the growing season in North Dakota has increased. The growing season lengthened during this period by 32 days - over a month. 
+
+```
+
+##Finding 3: Climate change's effect on Native American reservations in North Dakota.
+
+```{r}
+#Read in the tribe data.
+tribal_procounty_ND <- read_csv("https://raw.githubusercontent.com/RMBJernigan/rmbj_Jour772Data/master/Group%20Project%202/data-2C-beyond-the-limit-usa-main/data/processed/tribal_data.csv")
+
+```
+
+```{r}
+#This chart was created to specifically look at the average change of temperature in the counties that have tribes or nations on the land
+tribal_county_ND <- model_county_ND_sorted %>%
+  filter(CTYNAME %in% c("Sioux County", "Benson County", "Richland County" ,"Sargent County","Grant County","McLean County", " Mountrail County", "Dunn County", "McKenzie County", "Mercer County", "Ward County", "Rolette County" ))
+  
+  
+#CTYNAME == "Sioux County", "Benson County", "Richland County" ,"Sargent County","Grant County","McLean County", " Mountrail County", "Dunn County", "McKenzie County", "Mercer County", "Ward County", "Rolette County")
+ 
+#Display below
+tribal_county_ND
+```
+
+```{r}
+#This a self made chart about the ProPublica data on the climate change of the different counties around the state. It analysis the rises of the different subs of the data. This is before doing an innerjoin
+tribal_procounty_ND 
+  transform(as.numeric(fips))
+```
+
+```{r}
+tribal_join_county_ND <- tribal_county_ND  %>%
+  inner_join(tribal_procounty_ND)
+ 
+```
+
 ##Finding 4: 
