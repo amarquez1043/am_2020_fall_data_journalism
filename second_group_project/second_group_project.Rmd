@@ -65,7 +65,7 @@ model_state_sorted <- model_state %>%
 ```
 
 #Each row has the following variables, according to The Washington Post's series, "2ºC: Beyond the Limit." 
-- `fips` A five digit fips code for the county
+- `fips` A five-digit fips code for the county
 - `CTYNAME` the name of the county
 - `STNAME` the name of the state
 - `Annual` Estimate of annual average temperature change in Celsius for the county, 1895-2019
@@ -217,10 +217,10 @@ tribal_procounty_ND <- read_csv("https://raw.githubusercontent.com/RMBJernigan/r
 
 ```
 
-The next two data sets are split into two parts: To show thecounties in North Dakota nad to show the climate change/impact that has happened in these counties.
+The next two data sets are split into two parts: To show the counties in North Dakota and to show the climate change/impact that has happened in these counties.
 ```{r}
 #This chart was created to specifically look at the average change of temperature in the counties that have tribes or nations in the state. 
-#Tribes in North Dakota: Mandann, Hidatsa, Arikara Nation(Three Affiliated Tribes), Sisseton-Wahpeton Oyate Nation, Spirit Lake Nation, Standing Rock Sioux Tribe, and Turtle Mountain Band of Chippewa Indian
+#Tribes in North Dakota: Mandann, Hidatsa, Arikara Nation (three affiliated tribes), Sisseton-Wahpeton Oyate Nation, Spirit Lake Nation, Standing Rock Sioux Tribe, and Turtle Mountain Band of Chippewa Indian
 #Create a new data set that only shows the counties that have tribes
 tribal_county_ND <- model_county_ND_sorted %>%
   #Filter by the different counties in the state that have tribes
@@ -230,27 +230,27 @@ tribal_county_ND <- model_county_ND_sorted %>%
 tribal_county_ND
 ```
 
-#This data is from ProPublica in their "New Climate Maps Show a Transformed United States" article that shows the change of climate for different counties in the US. However for this finding wer are only looking at the counties that house tribes on the land
-#According to the Farming Crop Yields Data, By MidCentury, North Dakota will warm enough to allow more growing days and higher yield will have more Corn and Soy production.
-#Each row has the following variables, according the Propublica's series "New Climate Maps Show a Transformed United States" and ranges from 1 to 10
+#This data is from ProPublica in their "New Climate Maps Show a Transformed United States" article that shows the change of climate for different counties in the United States. However for this finding wer are only looking at the counties that house tribes on the land
+#According to the Farming Crop Yields Data, by mid-century, North Dakota will warm enough to allow more growing days and higher yield will have more corn and soy production.
+#Each row has the following variables, according the ProPublica's series "New Climate Maps Show a Transformed United States" and ranges from 1 to 10.
 
-- `fips` A five digit fips code for the county
+- `fips` A five-digit fips code for the county
 - `CTYNAME` the name of the county
 - `STNAME` the name of the state
-- `Heat(&Humidity)` overal heat changes in the county
-- `Wet Bulb` combiniation of heat and humidity 
-- `Farming Crop Yields` analysis of how the farming crops are effected
-- `Sea Level Rise` analysis of the rise of sea levels and properties being surmerged by water
+- `Heat(&Humidity)` overall heat changes in the county
+- `Wet Bulb` combination of heat and humidity 
+- `Farming Crop Yields` analysis of how the farming crops are affected
+- `Sea Level Rise` analysis of the rise of sea levels and properties being submerged by water
 - `Very Large Fires` analysis of wildfires and damage done to land 
 - `Economic Damages` analysis of damage or benefit from climate change economically
 
 ```{r}
-#This a self made chart about the ProPublica data on the climate change of the different counties around the state. In the original dataset, shows  a range from 1 to 10 with 1 not being as alarming or impactful compared to 10 being very impactful and dangerous. Most of the counties in ND stay under a 5 which is good for the state as the change does not impact these counties as much. 
+#This a self-made chart about the ProPublica data on the climate change of the different counties around the state. In the original data set, shows  a range from 1 to 10 with 1 not being as alarming or impactful compared to 10 being very impactful and dangerous. Most of the counties in ND stay under a 5 which is good for the state as the change does not impact these counties as much. 
 #Display below
 tribal_procounty_ND 
 ```
 
-##Finding 4: 
+##Finding 4: The effects of climate change on the harvesting seasons of individual crops in North Dakota.
 ```{r}
 # Read in and clean the crop data.
 # This data will help to show the impact of climate change on the harvesting seasons of individual crops. In this finding, we will be looking at the change in the harvesting seasons for corn that is harvested for grain only, not chopped for silage. 
